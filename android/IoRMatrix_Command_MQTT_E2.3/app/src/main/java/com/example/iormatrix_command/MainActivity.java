@@ -11,9 +11,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.PrintStream;
 import java.net.Socket;
@@ -21,19 +26,24 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MqttCallback{
 
-    private PrintStream ps;
+    //private PrintStream ps;
     //private Socket client;
     private  Boolean connected = false;
     final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     /* MQTT */
 
-    private MqttAndroidClient client;
-    private IMqttToken token;
-    private String broker = "tcp://mqtt.flespi.io:1883";
-    private String clientId = MqttClient.generateClientId();
+    private int qos = 0;
+    private MqttAndroidClient mqttClient;
+    //private IMqttToken token;
+    private String mqttBroker = "tcp://mqtt.flespi.io:1883";
+    private String mqttTopic = "commande";
+    private String mqttUsername = "5MU9zXUYY0fy7tmz13BejE2zxy7xzUzuxhrU49IRZOfW5rkXiLZsdRPAfNYEvnWQ";
+    //private String mqttMdp = "";
+    private String mqttClientId = MqttClient.generateClientId();
+    MqttMessage message;
 
 
 
@@ -47,7 +57,14 @@ public class MainActivity extends AppCompatActivity {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ps.println("h");
+                //ps.println("h");
+                message.setQos(qos);
+                message.setPayload("h".getBytes());
+                try {
+                    mqttClient.publish(mqttTopic,message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -56,7 +73,15 @@ public class MainActivity extends AppCompatActivity {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ps.println("b");
+                //ps.println("b");
+                message.setQos(qos);
+                message.setPayload("b".getBytes());
+                try {
+                    mqttClient.publish(mqttTopic,message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }
@@ -65,7 +90,14 @@ public class MainActivity extends AppCompatActivity {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ps.println("d");
+                //ps.println("d");
+                message.setQos(qos);
+                message.setPayload("d".getBytes());
+                try {
+                    mqttClient.publish(mqttTopic,message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -74,7 +106,14 @@ public class MainActivity extends AppCompatActivity {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ps.println("g");
+                //ps.println("g");
+                message.setQos(qos);
+                message.setPayload("g".getBytes());
+                try {
+                    mqttClient.publish(mqttTopic,message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -83,7 +122,14 @@ public class MainActivity extends AppCompatActivity {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ps.println("init");
+                //ps.println("init");
+                message.setQos(qos);
+                message.setPayload("init".getBytes());
+                try {
+                    mqttClient.publish(mqttTopic,message);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -93,10 +139,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if(connected){
-                    ps.println("exit");
-                    ps.close();
+                    //ps.println("exit");
+                    //ps.close();
+                    message.setQos(qos);
+                    message.setPayload("exit".getBytes());
                     try {
-                        client.close();
+                        mqttClient.publish(mqttTopic,message);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        mqttClient.close();
+                        mqttClient.disconnect();
                         connected = false;
                     }catch (Exception e) {
                         e.printStackTrace();
@@ -111,7 +166,20 @@ public class MainActivity extends AppCompatActivity {
         c.execute();
     }
 
+    @Override
+    public void connectionLost(Throwable cause) {
 
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+
+    }
 
 
     public class Connect extends AsyncTask<String,String,String>{
@@ -119,19 +187,18 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... param){
             try{
                 if(!connected) {
-/*                    client = new Socket("192.168.43.147", 3000);
+                   /* client = new Socket("192.168.43.147", 3000);
                     ps = new PrintStream(client.getOutputStream());
 
                     ps.println("afficher");
                     connected = true;*/
 
-                    MqttConnectOptions connectOptions = new MqttConnectOptions();
-                    connectOptions.setCleanSession(true);
-                    connectOptions.setUserName("user");
-                    connectOptions.setPassword("motdepasse".toCharArray());
-                    client = new MqttAndroidClient(MainActivity.this,broker,clientId);
-                    token = client.connect(connectOptions);
-                    //souscrire(); TODO
+                    //MqttConnectOptions connectOptions = new MqttConnectOptions();
+                    //connectOptions.setCleanSession(true);
+                    //connectOptions.setUserName(mqttUsername);
+                    //connectOptions.setPassword(mqttMdp.toCharArray());
+                    mqttClient = new MqttAndroidClient(MainActivity.this,mqttBroker,mqttClientId);
+                    mqttClient.connect();
                 }
             }catch (Exception e) {
                 e.printStackTrace();
