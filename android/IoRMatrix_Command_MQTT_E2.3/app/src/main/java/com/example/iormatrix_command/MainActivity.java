@@ -26,7 +26,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity implements MqttCallback{
+public class MainActivity extends AppCompatActivity {
 
     //private PrintStream ps;
     //private Socket client;
@@ -58,13 +58,16 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
             @Override
             public void run() {
                 //ps.println("h");
+                Log.i("test","test3 <---------------------------");
                 message.setQos(qos);
                 message.setPayload("h".getBytes());
+                Log.i("test","test4 <---------------------------");
                 try {
                     mqttClient.publish(mqttTopic,message);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
+                Log.i("test","test5 <---------------------------");
             }
         });
     }
@@ -166,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
         c.execute();
     }
 
-    @Override
+/*    @Override
     public void connectionLost(Throwable cause) {
 
     }
@@ -178,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-
-    }
+        Log.i("test",token.toString());
+    }*/
 
 
     public class Connect extends AsyncTask<String,String,String>{
@@ -190,15 +193,18 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
                    /* client = new Socket("192.168.43.147", 3000);
                     ps = new PrintStream(client.getOutputStream());
 
-                    ps.println("afficher");
-                    connected = true;*/
+                    ps.println("afficher");*/
+                    connected = true;
 
                     //MqttConnectOptions connectOptions = new MqttConnectOptions();
                     //connectOptions.setCleanSession(true);
                     //connectOptions.setUserName(mqttUsername);
                     //connectOptions.setPassword(mqttMdp.toCharArray());
+
+                    Log.i("test","test1 <---------------------------");
                     mqttClient = new MqttAndroidClient(MainActivity.this,mqttBroker,mqttClientId);
                     mqttClient.connect();
+                    Log.i("test","test2 <---------------------------");
                 }
             }catch (Exception e) {
                 e.printStackTrace();
