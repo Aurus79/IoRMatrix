@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean ready = true;
                 while(ready) {
                     System.out.println("IoRMatrix CLIENT Start ...");
-                    Socket readFromNoeud = new Socket("192.168.43.147", 3001);
+                    Socket readFromNoeud = new Socket("10.0.2.2", 3001);
                     System.out.println("Client connecte ...");
 
                     matrix.init();

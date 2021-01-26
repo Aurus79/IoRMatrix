@@ -1,4 +1,4 @@
-bool led_on =false ;
+bool led =false ;
 char input = 'b';
 
 void setup(){
@@ -16,12 +16,12 @@ void loop(){
   
   
   if (input== 'a'){
-    led_on = true;
+    led = true;
   }
   if (input == 'b') {
-    led_on = false ;    
+    led = false ;    
   }
-  if (led_on){
+  if (led){
     digitalWrite(13,HIGH);
   }else{
     digitalWrite(13,LOW);

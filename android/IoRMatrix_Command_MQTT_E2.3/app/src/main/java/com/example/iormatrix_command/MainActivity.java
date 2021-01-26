@@ -58,16 +58,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //ps.println("h");
-                Log.i("test","test3 <---------------------------");
+                //Log.i("test","test3 <---------------------------");
                 message.setQos(qos);
                 message.setPayload("h".getBytes());
-                Log.i("test","test4 <---------------------------");
+                //Log.i("test","test4 <---------------------------");
                 try {
                     mqttClient.publish(mqttTopic,message);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
-                Log.i("test","test5 <---------------------------");
+                //Log.i("test","test5 <---------------------------");
             }
         });
     }
@@ -201,15 +201,36 @@ public class MainActivity extends AppCompatActivity {
                     //connectOptions.setUserName(mqttUsername);
                     //connectOptions.setPassword(mqttMdp.toCharArray());
 
-                    Log.i("test","test1 <---------------------------");
+                    //Log.i("test","test1 <---------------------------");
                     mqttClient = new MqttAndroidClient(MainActivity.this,mqttBroker,mqttClientId);
                     mqttClient.connect();
-                    Log.i("test","test2 <---------------------------");
+                    //Log.i("test","test2 <---------------------------");
                 }
             }catch (Exception e) {
                 e.printStackTrace();
             }
             return "";
         }
+    }
+
+    /*
+    * Episode 3 partie 4
+    * */
+
+    public void on(View v){
+        Thread t = new Thread(() -> {
+            try {
+                client = new Socket(host, port);
+                ps = new PrintStream(client.getOutputStream());
+                if(value){
+                    ps.print("a");
+                    value = !value;
+                } else{
+                    ps.print("b");
+                    value = !value;
+                }
+            } catch (Exception ignored) {}
+        });
+        t.start();
     }
 }
